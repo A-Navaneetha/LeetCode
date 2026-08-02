@@ -1,0 +1,16 @@
+class Solution {
+    public boolean stoneGame(int[] piles) {
+        int n = piles.length;
+        int[][] sg = new int[n][n];
+        for (int i = 0; i < n; i++) {
+            sg[i][i] = piles[i];
+        }
+        for (int len = 2; len <= n; len++) {
+            for (int i = 0; i <= n - len; i++) {
+                int j = i + len - 1;
+                sg[i][j] = Math.max(piles[i] - sg[i + 1][j], piles[j] - sg[i][j - 1]);
+            }
+        }
+        return sg[0][n - 1] > 0;
+    }
+}
