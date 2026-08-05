@@ -1,0 +1,43 @@
+import java.util.*;
+class Solution {
+    public List<Integer> remainingMethods(int n, int k, int[][] invocations) {
+        List<List<Integer>> adj = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            adj.add(new ArrayList<>());
+        }
+        for (int[] inv : invocations) {
+            adj.get(inv[0]).add(inv[1]);
+        }
+        boolean[] isSuspicious = new boolean[n];
+        isSuspicious[k] = true;
+        Deque<Integer> s = new ArrayDeque<>();
+        s.push(k);
+        while (!s.isEmpty()) {
+            int curr = s.pop();
+            for (int neighbor : adj.get(curr)) {
+                if (!isSuspicious[neighbor]) {
+                    isSuspicious[neighbor] = true;
+                    s.push(neighbor);
+                }
+            }
+        }
+        for (int[] inv : invocations) {
+            int u = inv[0];
+            int v = inv[1];
+            if (!isSuspicious[u] && isSuspicious[v]) {
+                List<Integer> Methods = new ArrayList<>();
+                for (int i = 0; i < n; i++) {
+                    Methods.add(i);
+                }
+                return Methods;
+            }
+        }
+        List<Integer> res = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            if (!isSuspicious[i]) {
+                res.add(i);
+            }
+        }
+        return res;
+    }
+}
