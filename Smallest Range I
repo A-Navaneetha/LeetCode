@@ -1,0 +1,4 @@
+class Solution:
+    def smallestRangeI(self, nums: list[int], k: int) -> int:
+        initial_diff = max(nums) - min(nums)
+        return max(0, initial_diff - 2 * k)
