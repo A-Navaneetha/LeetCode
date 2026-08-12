@@ -1,0 +1,14 @@
+from collections import defaultdict
+from typing import List
+class Solution:
+    def maxSubarrayLength(self, nums: List[int], k: int) -> int:
+        c = defaultdict(int)
+        l = 0
+        maxlen = 0
+        for r in range(len(nums)):
+            c[nums[r]] += 1
+            while c[nums[r]] > k:
+                c[nums[l]] -= 1
+                l += 1
+            maxlen = max(maxlen, r - l + 1)
+        return maxlen
