@@ -1,0 +1,87 @@
+import java.util.List;
+class Solution {
+    private static class Node {
+        int maxLen;
+        int prefixLen;
+        int suffixLen;
+        char leftChar;
+        char rightChar;
+        Node(char ch) {
+            this.maxLen = 1;
+            this.prefixLen = 1;
+            this.suffixLen = 1;
+            this.leftChar = ch;
+            this.rightChar = ch;
+        }
+        Node() {}
+    }
+    private Node[] tree;
+    private char[] chars;
+    private int n;
+    private Node merge(Node left, Node right, int leftLen, int rightLen) {
+        Node res = new Node();
+        res.leftChar = left.leftChar;
+        res.rightChar = right.rightChar;
+        res.maxLen = Math.max(left.maxLen, right.maxLen);
+        res.prefixLen = left.prefixLen;
+        res.suffixLen = right.suffixLen;
+        if (left.rightChar == right.leftChar) {
+            int crossLen = left.suffixLen + right.prefixLen;
+            res.maxLen = Math.max(res.maxLen, crossLen);
+            if (left.prefixLen == leftLen) {
+                res.prefixLen = leftLen + right.prefixLen;
+            }
+            if (right.suffixLen == rightLen) {
+                res.suffixLen = rightLen + left.suffixLen;
+            }
+        }
+        return res;
+    }
+    private void build(int node, int start, int end) {
+        if (start == end) {
+            tree[node] = new Node(chars[start]);
+            return;
+        }
+        int mid = start + (end - start) / 2;
+        int leftChild = 2 * node + 1;
+        int rightChild = 2 * node + 2;
+        build(leftChild, start, mid);
+        build(rightChild, mid + 1, end);
+        int leftLen = mid - start + 1;
+        int rightLen = end - mid;
+        tree[node] = merge(tree[leftChild], tree[rightChild], leftLen, rightLen);
+    }
+    private void update(int node, int start, int end, int idx, char ch) {
+        if (start == end) {
+            chars[idx] = ch;
+            tree[node] = new Node(ch);
+            return;
+        }
+        int mid = start + (end - start) / 2;
+        int leftChild = 2 * node + 1;
+        int rightChild = 2 * node + 2;
+        if (idx <= mid) {
+            update(leftChild, start, mid, idx, ch);
+        } else {
+            update(rightChild, mid + 1, end, idx, ch);
+        }
+        int leftLen = mid - start + 1;
+        int rightLen = end - mid;
+        tree[node] = merge(tree[leftChild], tree[rightChild], leftLen, rightLen);
+    }
+    public int[] longestRepeating(String s, String queryCharacters, int[] queryIndices) {
+        this.n = s.length();
+        this.chars = s.toCharArray();
+        this.tree = new Node[4 * n];
+        build(0, 0, n - 1);
+        int k = queryIndices.length;
+        int[] result = new int[k];
+        for (int i = 0; i < k; i++) {
+            char ch = queryCharacters.charAt(i);
+            int idx = queryIndices[i];
+            update(0, 0, n - 1, idx, ch);
+            result[i] = tree[0].maxLen;
+        }
+        return result;
+    }
+}
