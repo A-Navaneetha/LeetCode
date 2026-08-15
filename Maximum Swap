@@ -1,0 +1,11 @@
+class Solution:
+    def maximumSwap(self, num: int) -> int:
+        dig = list(str(num))
+        lastindex = {int(val): i for i, val in enumerate(dig)}
+        for i, val in enumerate(dig):
+            currdigit = int(val)
+            for d in range(9, currdigit, -1):
+                if lastindex.get(d, -1) > i:
+                    dig[i], dig[lastindex[d]] = dig[lastindex[d]], dig[i]
+                    return int("".join(dig))
+        return num
