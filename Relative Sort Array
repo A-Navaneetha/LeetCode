@@ -1,0 +1,11 @@
+from collections import Counter
+class Solution:
+    def relativeSortArray(self, arr1: list[int], arr2: list[int]) -> list[int]:
+        c = Counter(arr1)
+        res = []
+        for num in arr2:
+            res.extend([num] * c[num])
+            del c[num]
+        for num in sorted(c.keys()):
+            res.extend([num] * c[num])
+        return res
