@@ -1,0 +1,32 @@
+import java.util.HashMap;
+import java.util.Map;
+class Solution {
+    public int maxNumberOfFamilies(int n, int[][] reservedSeats) {
+        Map<Integer, Integer> reserved = new HashMap<>();
+        for (int[] seat : reservedSeats) {
+            int row = seat[0];
+            int col = seat[1];
+            if (col >= 2 && col <= 9) {
+                int m = reserved.getOrDefault(row, 0);
+                m |= (1 << (col - 2));
+                reserved.put(row, m);
+            }
+        }
+        int maxGroups = 2 * n;
+        int leftMask = 0b00001111;  
+        int rightMask = 0b11110000; 
+        int midMask = 0b00111100;   
+        for (int mask : reserved.values()) {
+            boolean leftOk = (mask & leftMask) == 0;
+            boolean rightOk = (mask & rightMask) == 0;
+            if (leftOk && rightOk) {
+                continue; 
+            } else if (leftOk || rightOk || (mask & midMask) == 0) {
+                maxGroups -= 1;
+            } else {
+                maxGroups -= 2;
+            }
+        }
+        return maxGroups;
+    }
+}
