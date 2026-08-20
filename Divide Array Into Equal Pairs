@@ -1,0 +1,14 @@
+class Solution {
+    public boolean divideArray(int[] nums) {
+        int[] c = new int[501];
+        for (int num : nums) {
+            c[num]++;
+        }
+        for (int count : c) {
+            if (count % 2 != 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
