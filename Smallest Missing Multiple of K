@@ -1,0 +1,15 @@
+import java.util.HashSet;
+import java.util.Set;
+class Solution {
+    public int missingMultiple(int[] nums, int k) {
+        Set<Integer> s = new HashSet<>();
+        for (int n : nums) {
+            s.add(n);
+        }
+        int multiple = k;
+        while (s.contains(multiple)) {
+            multiple += k;
+        }
+        return multiple;
+    }
+}
