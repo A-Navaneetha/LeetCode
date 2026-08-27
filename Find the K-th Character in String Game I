@@ -1,0 +1,13 @@
+class Solution {
+    public char kthCharacter(int k) {
+        if (k == 1) {
+            return 'a';
+        }
+        int len = 1;
+        while (len * 2 < k) {
+            len *= 2;
+        }
+        char prevChar = kthCharacter(k - len);
+        return (char) (prevChar + 1);
+    }
+}
