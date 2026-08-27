@@ -1,0 +1,38 @@
+import java.util.Arrays;
+class Solution {
+    public String lexGreaterPermutation(String s, String target) {
+        int n = s.length();
+        int[] count = new int[26];
+        for (char c : s.toCharArray()) {
+            count[c - 'a']++;
+        }
+        for (int i = n - 1; i >= 0; i--) {
+            int[] curCount = Arrays.copyOf(count, 26);
+            boolean possiblePrefix = true;
+            for (int j = 0; j < i; j++) {
+                if (--curCount[target.charAt(j) - 'a'] < 0) {
+                    possiblePrefix = false;
+                    break;
+                }
+            }
+            if (!possiblePrefix) continue;
+            int targetChar = target.charAt(i) - 'a';
+            for (int c = targetChar + 1; c < 26; c++) {
+                if (curCount[c] > 0) {
+                    curCount[c]--;
+                    StringBuilder res = new StringBuilder();
+                    res.append(target, 0, i);
+                    res.append((char) ('a' + c));
+                    for (int ch = 0; ch < 26; ch++) {
+                        while (curCount[ch] > 0) {
+                            res.append((char) ('a' + ch));
+                            curCount[ch]--;
+                        }
+                    }
+                    return res.toString();
+                }
+            }
+        }
+        return "";
+    }
+}
