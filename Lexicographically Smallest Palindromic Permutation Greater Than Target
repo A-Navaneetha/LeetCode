@@ -1,0 +1,102 @@
+import java.util.Arrays;
+
+class Solution {
+    public String lexPalindromicPermutation(String s, String target) {
+        int n = s.length();
+        int[] count = new int[26];
+        for (char c : s.toCharArray()) {
+            count[c - 'a']++;
+        }
+
+        int oddCount = 0;
+        int midChar = -1;
+        for (int i = 0; i < 26; i++) {
+            if (count[i] % 2 != 0) {
+                oddCount++;
+                midChar = i;
+            }
+        }
+
+        if (oddCount > 1) {
+            return "";
+        }
+
+        int m = n / 2;
+        int[] halfCount = new int[26];
+        for (int i = 0; i < 26; i++) {
+            halfCount[i] = count[i] / 2;
+        }
+
+        // Try matching a prefix of length L with target's first half
+        for (int L = m; L >= 0; L--) {
+            int[] currentHalfCount = halfCount.clone();
+            char[] prefix = new char[m];
+            boolean possible = true;
+
+            for (int i = 0; i < L; i++) {
+                int c = target.charAt(i) - 'a';
+                if (currentHalfCount[c] > 0) {
+                    prefix[i] = target.charAt(i);
+                    currentHalfCount[c]--;
+                } else {
+                    possible = false;
+                    break;
+                }
+            }
+
+            if (!possible) continue;
+
+            // Case A: If L == m, the first half matches target's first half completely.
+            // Check if mirroring this half (plus midChar if odd length) forms a valid answer.
+            if (L == m) {
+                char[] candHalf = prefix.clone();
+                String res = buildPalindrome(candHalf, n, midChar);
+                if (res.compareTo(target) > 0) {
+                    return res;
+                }
+                continue;
+            }
+
+            // Case B: At index L, try placing a character strictly greater than target.charAt(L)
+            int startChar = target.charAt(L) - 'a' + 1;
+
+            for (int nextChar = startChar; nextChar < 26; nextChar++) {
+                if (currentHalfCount[nextChar] <= 0) continue;
+
+                char[] candHalf = prefix.clone();
+                candHalf[L] = (char) ('a' + nextChar);
+
+                int[] remCount = currentHalfCount.clone();
+                remCount[nextChar]--;
+
+                // Fill the rest of the half greedily with the smallest available characters
+                int idx = L + 1;
+                for (int c = 0; c < 26; c++) {
+                    while (remCount[c] > 0) {
+                        candHalf[idx++] = (char) ('a' + c);
+                        remCount[c]--;
+                    }
+                }
+
+                String res = buildPalindrome(candHalf, n, midChar);
+                if (res.compareTo(target) > 0) {
+                    return res;
+                }
+            }
+        }
+
+        return "";
+    }
+
+    private String buildPalindrome(char[] half, int n, int midChar) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(half);
+        if (n % 2 != 0) {
+            sb.append((char) ('a' + midChar));
+        }
+        for (int i = half.length - 1; i >= 0; i--) {
+            sb.append(half[i]);
+        }
+        return sb.toString();
+    }
+}
